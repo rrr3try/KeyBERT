@@ -42,7 +42,8 @@ class KeyBERT:
                          use_maxsum: bool = False,
                          use_mmr: bool = False,
                          diversity: float = 0.5,
-                         nr_candidates: int = 20) -> Union[List[str], List[List[str]]]:
+                         nr_candidates: int = 20,
+                         n_gram_range: tuple = None) -> Union[List[str], List[List[str]]]:
         """ Extract keywords/keyphrases
 
         NOTE:
@@ -75,6 +76,8 @@ class KeyBERT:
                        is set to True
             nr_candidates: The number of candidates to consider if use_maxsum is
                            set to True
+            n_gram_range: pass argument to CountVectorizer(ngram_range=...)
+
 
         Returns:
             keywords: the top n keywords for a document
@@ -89,7 +92,8 @@ class KeyBERT:
                                                      use_maxsum,
                                                      use_mmr,
                                                      diversity,
-                                                     nr_candidates)
+                                                     nr_candidates,
+                                                     n_gram_range)
         elif isinstance(docs, list):
             warnings.warn("Although extracting keywords for multiple documents is faster "
                           "than iterating over single documents, it requires significant memory "
@@ -108,7 +112,8 @@ class KeyBERT:
                                      use_maxsum: bool = False,
                                      use_mmr: bool = False,
                                      diversity: float = 0.5,
-                                     nr_candidates: int = 20) -> List[str]:
+                                     nr_candidates: int = 20,
+                                     n_gram_range: tuple = None) -> List[str]:
         """ Extract keywords/keyphrases for a single document
 
         Arguments:
@@ -127,7 +132,7 @@ class KeyBERT:
         """
         try:
             # Extract Words
-            n_gram_range = (keyphrase_length, keyphrase_length)
+            n_gram_range = n_gram_range or (keyphrase_length, keyphrase_length)
             count = CountVectorizer(ngram_range=n_gram_range, stop_words=stop_words).fit([doc])
             words = count.get_feature_names()
 
